@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#5b1021">
+  <meta name="description" content="Google Sheets 연동형 모바일 여행 플래너">
+  <title>여행 플래너</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%235b1021'/%3E%3Cpath d='M18 20h28v6H18zm0 12h18v6H18zm0 12h28v6H18z' fill='%23f8f2e9'/%3E%3C/svg%3E">
+  <style>
+    :root{--wine:#5b1021;--wine2:#7b1830;--ivory:#f6f1e9;--paper:#fffdf9;--ink:#241f20;--muted:#756d6f;--line:#ded4cd;--soft:#eee5dc;--good:#19704c;--warn:#9b6214;--danger:#a63b38;--shadow:0 16px 40px rgba(46,25,31,.09)}
+    *{box-sizing:border-box}html{background:var(--ivory);scroll-behavior:smooth}body{margin:0;color:var(--ink);background:var(--ivory);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Segoe UI",sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}button,a{font:inherit}button{cursor:pointer}.shell{min-height:100svh}.hero{position:relative;overflow:hidden;padding:max(28px,env(safe-area-inset-top)) 20px 28px;color:#fff;background:linear-gradient(142deg,#3e0916 0%,var(--wine) 48%,#78162d 100%)}.hero:before{content:"";position:absolute;inset:-40% -10% auto 35%;height:300px;border:1px solid rgba(255,255,255,.12);border-radius:50%;transform:rotate(-18deg)}.hero:after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:36px 36px;mask-image:linear-gradient(to bottom,black,transparent)}.hero-inner,.content{position:relative;z-index:1;max-width:1040px;margin:auto}.topline,.actions,.meta,.section-title,.sync-main,.empty-actions{display:flex;align-items:center}.topline{justify-content:space-between}.eyebrow{font-size:.75rem;font-weight:800;letter-spacing:.16em}.live{display:inline-flex;gap:7px;align-items:center;padding:7px 10px;border:1px solid rgba(255,255,255,.24);border-radius:999px;font-size:.74rem;font-weight:800}.live i{width:7px;height:7px;border-radius:50%;background:#d5a75f}.hero h1{max-width:740px;margin:34px 0 6px;font-family:Georgia,"Times New Roman","Noto Serif KR",serif;font-size:clamp(2.3rem,9vw,5.6rem);line-height:.98;letter-spacing:-.055em}.place{margin:0;color:rgba(255,255,255,.72);font-size:1rem}.meta{flex-wrap:wrap;gap:10px 18px;margin-top:24px;color:rgba(255,255,255,.85);font-size:.88rem}.meta span{display:inline-flex;align-items:center;gap:7px}.actions{gap:10px;margin-top:25px}.btn{min-height:46px;padding:0 17px;border:0;border-radius:14px;font-weight:800;transition:.2s transform,.2s opacity}.btn:active{transform:scale(.98)}.btn-light{background:#fff;color:var(--wine)}.btn-ghost{color:#fff;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2)}.content{padding:18px 16px max(48px,env(safe-area-inset-bottom))}.sync{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-top:-34px;padding:16px;border:1px solid rgba(105,53,66,.12);border-radius:18px;background:rgba(255,253,249,.96);box-shadow:var(--shadow);backdrop-filter:blur(12px)}.sync-main{gap:11px}.dot{flex:0 0 auto;width:10px;height:10px;border-radius:50%;background:var(--warn);box-shadow:0 0 0 4px rgba(155,98,20,.12)}.sync strong{display:block;font-size:.92rem}.sync small{display:block;margin-top:2px;color:var(--muted);font-size:.76rem}.badge{white-space:nowrap;padding:7px 9px;border-radius:999px;color:var(--warn);background:#fff1d8;font-size:.72rem;font-weight:800}.section{margin-top:38px}.section-title{justify-content:space-between;margin-bottom:14px}.section-title h2{margin:3px 0 0;font-family:Georgia,"Times New Roman","Noto Serif KR",serif;font-size:1.7rem;letter-spacing:-.04em}.section-title .eyebrow{color:var(--wine2)}.grid{display:grid;gap:12px}.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}.card{padding:18px;border:1px solid var(--line);border-radius:20px;background:var(--paper);box-shadow:0 8px 24px rgba(52,33,37,.04)}.card-label{display:flex;align-items:center;gap:8px;color:var(--wine2);font-size:.74rem;font-weight:900;letter-spacing:.1em}.card h3{margin:14px 0 5px;font-size:1.05rem}.card p{margin:0;color:var(--muted);font-size:.88rem}.empty-card{padding:28px 20px;text-align:center;border:1px dashed #cdbdb4;border-radius:22px;background:rgba(255,253,249,.7)}.empty-icon{display:grid;place-items:center;width:48px;height:48px;margin:0 auto 13px;border-radius:15px;color:#fff;background:var(--wine)}.empty-card h3{margin:0 0 8px;font-size:1.08rem}.empty-card p{max-width:480px;margin:0 auto;color:var(--muted);font-size:.9rem}.empty-actions{justify-content:center;margin-top:17px}.outline{min-height:44px;padding:0 15px;border:1px solid var(--line);border-radius:13px;color:var(--wine);background:#fff;font-weight:800}.timeline{display:grid;gap:10px}.timeline-row{display:grid;grid-template-columns:62px 1fr;gap:14px}.time{padding-top:17px;color:var(--wine);font-size:.9rem;font-weight:900}.schedule-card{position:relative;padding:17px 17px 17px 20px;border:1px solid var(--line);border-radius:18px;background:var(--paper)}.schedule-card:before{content:"";position:absolute;left:0;top:17px;bottom:17px;width:4px;border-radius:0 4px 4px 0;background:var(--wine2)}.schedule-card strong{display:block}.schedule-card small{color:var(--muted)}.tabs{display:flex;gap:8px;overflow:auto;margin:0 -16px 14px;padding:0 16px 3px;scrollbar-width:none}.tab{flex:0 0 auto;min-height:42px;padding:0 14px;border:1px solid var(--line);border-radius:13px;color:var(--muted);background:var(--paper);font-weight:800}.tab[aria-selected="true"]{color:#fff;border-color:var(--wine);background:var(--wine)}.footnote{margin-top:34px;padding:18px;border-radius:18px;color:#735c46;background:#efe5d9;font-size:.83rem}.toast{position:fixed;z-index:30;left:50%;bottom:max(24px,env(safe-area-inset-bottom));width:min(calc(100% - 32px),520px);padding:14px 16px;border-radius:14px;color:#fff;background:#2d2728;box-shadow:var(--shadow);transform:translate(-50%,140%);transition:.28s transform}.toast.show{transform:translate(-50%,0)}.modal{position:fixed;z-index:40;inset:0;display:none;align-items:flex-end;justify-content:center;padding:16px;background:rgba(27,18,20,.46)}.modal.open{display:flex}.sheet{width:min(100%,620px);padding:22px;border-radius:24px 24px 18px 18px;background:var(--paper);box-shadow:0 24px 70px rgba(0,0,0,.22)}.sheet h2{margin:0 0 6px}.sheet p{color:var(--muted)}.sheet .btn{width:100%;margin-top:10px;color:#fff;background:var(--wine)}
+    @media(max-width:680px){.hero{padding-left:18px;padding-right:18px}.hero h1{margin-top:42px}.actions{align-items:stretch;flex-direction:column}.actions .btn{width:100%}.sync{align-items:flex-start;margin-top:-18px}.grid.two{grid-template-columns:1fr}.section{margin-top:32px}.timeline-row{grid-template-columns:54px 1fr}}
+    @media(min-width:820px){.hero{padding-bottom:54px}.content{padding-left:24px;padding-right:24px}.grid.cards{grid-template-columns:1.1fr .9fr}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <div class="hero-inner">
+        <div class="topline"><span class="eyebrow">TRAVEL SHEET</span><span class="live"><i></i> SETUP</span></div>
+        <h1 id="tripName">여행 플래너</h1>
+        <p class="place" id="tripPlace">Google Sheets 연결형 모바일 여행 사이트</p>
+        <div class="meta"><span>◇ 여행 기간 미입력</span><span>○ 인원 미입력</span><span>⌁ 모바일 우선</span></div>
+        <div class="actions">
+          <button class="btn btn-light" id="refreshBtn" type="button">새로고침</button>
+          <button class="btn btn-ghost" id="lookupBtn" type="button">외부 정보 업데이트</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="content">
+      <section class="sync" aria-live="polite">
+        <div class="sync-main"><span class="dot"></span><div><strong>기본 사이트 접속 확인 단계입니다.</strong><small>Google Sheets는 다음 단계에서 연결합니다.</small></div></div>
+        <span class="badge">연동 전</span>
+      </section>
+
+      <section class="section">
+        <div class="section-title"><div><span class="eyebrow">TRIP ESSENTIALS</span><h2>항공편과 숙소</h2></div></div>
+        <div class="grid two">
+          <article class="card"><span class="card-label">✈ FLIGHTS</span><h3>항공편 정보 없음</h3><p>시트 연동 후 최대 6구간이 여기에 표시됩니다.</p></article>
+          <article class="card"><span class="card-label">▣ STAY</span><h3>호텔 정보 없음</h3><p>시트 연동 후 최대 6곳이 여기에 표시됩니다.</p></article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title"><div><span class="eyebrow">SCHEDULE</span><h2>여행 일정</h2></div></div>
+        <div class="tabs" role="tablist" aria-label="여행 날짜"><button class="tab" type="button" aria-selected="true">연결 전</button></div>
+        <div class="empty-card">
+          <span class="empty-icon">⌁</span><h3>아직 불러온 일정이 없습니다.</h3>
+          <p>이 화면이 iPhone Safari에서 정상적으로 열리는지 먼저 확인합니다. 확인 후 V5 Google Sheets 데이터를 연결합니다.</p>
+          <div class="empty-actions"><button class="outline" id="guideBtn" type="button">현재 단계 보기</button></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title"><div><span class="eyebrow">CANDIDATE PLACES</span><h2>후보 장소</h2></div></div>
+        <div class="empty-card"><h3>후보 장소 정보 없음</h3><p>장소명이 있는 행만 표시하고, 높은 우선순위는 별도 색상으로 강조할 예정입니다.</p></div>
+      </section>
+
+      <aside class="footnote">이 파일에는 여행 데이터, API 키, 과거 상하이 일정이 들어 있지 않습니다. GitHub Pages 접속 검증이 완료된 뒤 Apps Script API를 연결합니다.</aside>
+    </div>
+  </main>
+
+  <div class="toast" id="toast" role="status"></div>
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="sheet"><h2 id="modalTitle">현재 구현 단계</h2><p>0단계 정적 웹사이트입니다. 서버와 시트에 의존하지 않으므로 이 화면은 항상 열려야 합니다. GitHub Pages 배포와 iPhone 확인을 마치면 읽기 전용 시트 연동을 진행합니다.</p><button class="btn" id="closeModal" type="button">확인</button></div>
+  </div>
+
+  <script>
+    (()=>{
+      'use strict';
+      const toast=document.getElementById('toast');
+      const modal=document.getElementById('modal');
+      let timer;
+      const notify=(message)=>{toast.textContent=message;toast.classList.add('show');clearTimeout(timer);timer=setTimeout(()=>toast.classList.remove('show'),2600)};
+      document.getElementById('refreshBtn').addEventListener('click',()=>notify('기본 화면이 정상 작동하고 있습니다.'));
+      document.getElementById('lookupBtn').addEventListener('click',()=>notify('외부조회는 Google Sheets 연결 이후 활성화됩니다.'));
+      document.getElementById('guideBtn').addEventListener('click',()=>modal.classList.add('open'));
+      document.getElementById('closeModal').addEventListener('click',()=>modal.classList.remove('open'));
+      modal.addEventListener('click',(event)=>{if(event.target===modal)modal.classList.remove('open')});
+      document.addEventListener('keydown',(event)=>{if(event.key==='Escape')modal.classList.remove('open')});
+    })();
+  </script>
+</body>
+</html>
