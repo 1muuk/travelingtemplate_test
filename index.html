@@ -63,6 +63,8 @@
     (()=>{
       'use strict';
       const API_URL='https://script.google.com/macros/s/AKfycbwSQ32Uy2CuGH0ie4DtBuOznVDTZO8eRmIkmYOckdERF7CLXX5IrugTuUW7kXJW75HOtA/exec?action=data';
+      const CACHE_KEY='travelPlanner:lastPayload:v1';
+      const CACHE_TIME_KEY='travelPlanner:lastPayloadSavedAt:v1';
       const $=(id)=>document.getElementById(id);
       const toast=$('toast');
       let toastTimer;
@@ -138,31 +140,80 @@
         setSync(state,label,`${counts} / validation GREEN ${Number(summary.GREEN||0)}, YELLOW ${Number(summary.YELLOW||0)}, RED ${Number(summary.RED||0)}`,hasError?'RED':hasWarning?'YELLOW':'GREEN');
       }
 
-      async function loadData({announce=false}={}){
+      function readCachedPayload(){
+        try{
+          const raw=localStorage.getItem(CACHE_KEY);
+          if(!raw)return null;
+          const payload=JSON.parse(raw);
+          return payload&&payload.ok===true&&payload.data?payload:null;
+        }catch(error){
+          console.warn('캐시 읽기 실패:',error);
+          return null;
+        }
+      }
+
+      function saveCachedPayload(payload){
+        try{
+          localStorage.setItem(CACHE_KEY,JSON.stringify(payload));
+          localStorage.setItem(CACHE_TIME_KEY,new Date().toISOString());
+        }catch(error){
+          console.warn('캐시 저장 실패:',error);
+        }
+      }
+
+      function cachedAtLabel(){
+        const raw=localStorage.getItem(CACHE_TIME_KEY);
+        if(!raw)return '저장 시각 정보 없음';
+        const date=new Date(raw);
+        if(Number.isNaN(date.getTime()))return '저장 시각 정보 없음';
+        return new Intl.DateTimeFormat('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}).format(date);
+      }
+
+      async function loadData({announce=false,background=false}={}){
         const button=$('refreshBtn');
-        button.disabled=true;
-        button.textContent='불러오는 중…';
-        setSync('loading','Google Sheets 데이터를 불러오는 중입니다.','Apps Script Data API에 연결하고 있습니다.','연결 중');
+        if(!background){
+          button.disabled=true;
+          button.textContent='불러오는 중…';
+          setSync('loading','Google Sheets 데이터를 불러오는 중입니다.','Apps Script Data API에 연결하고 있습니다.','연결 중');
+        }
         try{
           const response=await fetch(API_URL,{method:'GET',cache:'no-store',redirect:'follow'});
           if(!response.ok)throw new Error(`HTTP ${response.status}`);
           const payload=await response.json();
           if(!payload||payload.ok!==true||!payload.data)throw new Error(payload?.message||'올바른 Data API 응답이 아닙니다.');
+          saveCachedPayload(payload);
           render(payload);
           if(announce)notify('최신 시트 데이터를 다시 불러왔습니다.');
         }catch(error){
           console.error('Data API 연결 실패:',error);
-          setSync('danger','데이터 연결에 실패했습니다.',`기존 화면은 유지됩니다. ${text(error.message,'네트워크 오류')}`,'연결 오류');
-          notify('데이터를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.');
+          const cached=readCachedPayload();
+          if(cached){
+            render(cached);
+            setSync('loading','저장된 여행 정보를 표시 중입니다.',`오프라인 또는 API 연결 실패 · 마지막 저장 ${cachedAtLabel()}`,'OFFLINE');
+            if(announce)notify('인터넷 연결이 없어 저장된 여행 정보를 표시합니다.');
+          }else{
+            setSync('danger','데이터 연결에 실패했습니다.',`저장된 데이터도 없습니다. ${text(error.message,'네트워크 오류')}`,'연결 오류');
+            notify('데이터를 불러오지 못했습니다. 인터넷 연결 후 다시 시도해 주세요.');
+          }
         }finally{
-          button.disabled=false;
-          button.textContent='새로고침';
+          if(!background){
+            button.disabled=false;
+            button.textContent='새로고침';
+          }
         }
       }
 
       $('refreshBtn').addEventListener('click',()=>loadData({announce:true}));
       $('lookupBtn').addEventListener('click',()=>notify('외부 정보 업데이트 기능은 이 테스트에서 비활성화되어 있습니다.'));
-      loadData();
+
+      const cached=readCachedPayload();
+      if(cached){
+        render(cached);
+        setSync('loading','저장된 여행 정보를 먼저 표시했습니다.',`백그라운드에서 최신 데이터 확인 중 · 마지막 저장 ${cachedAtLabel()}`,'CACHE');
+        loadData({background:true});
+      }else{
+        loadData();
+      }
     })();
   </script>
 </body>
